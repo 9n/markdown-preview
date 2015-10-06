@@ -1,11 +1,10 @@
 path = require 'path'
 
-{Emitter, Disposable, CompositeDisposable} = require 'atom'
+{Emitter, Disposable, CompositeDisposable, File} = require 'atom'
 {$, $$$, ScrollView} = require 'atom-space-pen-views'
 Grim = require 'grim'
 _ = require 'underscore-plus'
 fs = require 'fs-plus'
-{File} = require 'pathwatcher'
 
 renderer = require './renderer'
 
@@ -35,7 +34,7 @@ class MarkdownPreviewView extends ScrollView
 
   serialize: ->
     deserializer: 'MarkdownPreviewView'
-    filePath: @getPath()
+    filePath: @getPath() ? @filePath
     editorId: @editorId
 
   destroy: ->
@@ -135,7 +134,7 @@ class MarkdownPreviewView extends ScrollView
     @getMarkdownSource().then (source) => @renderMarkdownText(source) if source?
 
   getMarkdownSource: ->
-    if @file?
+    if @file?.getPath()
       @file.read()
     else if @editor?
       Promise.resolve(@editor.getText())
